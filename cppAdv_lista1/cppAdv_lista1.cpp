@@ -10,7 +10,7 @@ int main()
 
     using cpplab::vector;
     vector<int> w1;
-    vector<char> w2;
+    //vector<char> w2;
     w1.add(10);
     w1.add(20);
     w1.add(30);
@@ -19,8 +19,5 @@ int main()
     w1.delete_last();
     w1.print();
     std::cout << w1.get(1);
-
-    w2.add(55);
-    w2.print();
 }
 

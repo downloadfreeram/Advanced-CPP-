@@ -101,10 +101,6 @@ namespace cpplab {
 			}
 			std::cout << "\n";
 		}
-		void getType()
-		{
-			return typeid(arr[0]).name();
-		}
 	};
 }
 
