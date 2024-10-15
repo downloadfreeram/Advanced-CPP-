@@ -14,14 +14,14 @@ template <typename T>
 auto insertion_sort(std::vector<T> w)
 {
 	std::cout << "Before the insertion sort: ";
-	for (int i = 0;i < w.size();i++)
+	for (int i = 0; i < w.size(); i++)
 	{
 		std::cout << w[i] << " ";
 	}
 	std::cout << std::endl;
-	for (int i = 1;i < w.size();i++)
+	for (int i = 1; i < w.size(); i++)
 	{
-		int key = w[i];
+		T key = w[i];
 		int j = i - 1;
 
 		while (j >= 0 && w[j] > key)
@@ -32,75 +32,92 @@ auto insertion_sort(std::vector<T> w)
 		w[j + 1] = key;
 	}
 	std::cout << "After the insertion sort: ";
-	for (int i = 0;i < w.size();i++)
+	for (int i = 0; i < w.size(); i++)
 	{
 		std::cout << w[i] << " ";
 	}
 	std::cout << std::endl;
 }
 
+//zadanie 3
 namespace cpplab {
 	template <typename T>
 	class vector {
+	private:
 		T* arr;
-		int vector_index;
-		int vector_capacity;
+		size_t vector_size = 0;
+		T value_type;
 	public:
-		//default constructor
 		vector() {
-			arr = new T[1];
-			vector_index = 0;
-			vector_capacity = 1;
+			arr = new T[0];
+			vector_size = 0;
 		}
-		//deconstructor
-		~vector() { delete[] arr; }
+		T& operator[] (size_t index)
+		{
+			if (index >= vector_size)
+				throw std::out_of_range("ERROR: Index out of range");
 
-		void add(T value) 
+			return arr[index];
+		}
+		void push_back(const T& value)
 		{
-			if (vector_index == vector_capacity)
+			T* temp = new T[vector_size + 1];
+			for (size_t i = 0; i < vector_size; i++)
 			{
-				T* temp = new T[2 * vector_capacity];
-				for (int i = 0;i < vector_capacity;i++)
-				{
-					temp[i] = arr[i];
-				}
-				delete[] arr;
-				vector_capacity *= 2;
-				arr = temp;
+				temp[i] = arr[i];
 			}
-			arr[vector_index] = value;
-			vector_index++;
+			delete[] arr;
+			temp[vector_size] = value;
+			arr = temp;
+			vector_size++;
+			
 		}
-		void add(T value, int index)
+		void push(const T& value, size_t index)
 		{
-			if (vector_index == vector_capacity) {
-				add(value);
-			}
-			else {
-				arr[index] = value;
-			}
-		}
-		void delete_last()
-		{
-			vector_capacity--;
-		}
-		T get(int index)
-		{
-			if (index < vector_index) {
-				return arr[index];
-			}
-			else {
-				return -1;
-			}
-		}
-		void print()
-		{
-			for (int i = 0; i < vector_capacity; i++)
+			if (index >= vector_size)
+				throw std::out_of_range("ERROR: Index out of range");
+			T* temp = new T[vector_size];
+			for (size_t i = 0; i < vector_size; i++)
 			{
-				std::cout << arr[i] << " ";
+				temp[i] = arr[i];
 			}
-			std::cout << "\n";
+			delete[] arr;
+			temp[index] = value;
+			arr = temp;
 		}
+		void pop_back()
+		{
+			T* temp = new T[vector_size - 1];
+			for (size_t i = 0; i < vector_size - 1; i++)
+			{
+				temp[i] = arr[i];
+			}
+			delete[] arr;
+			arr = temp;
+			vector_size--;
+		}
+		void resize(const int new_size)
+		{
+			if (new_size >= vector_size)
+				throw std::runtime_error("ERROR: The number of the resize is larger than the vector length ");
+			T* temp = new T[new_size];
+			for (size_t i = 0; i < new_size; i++)
+			{
+				temp[i] = arr[i];
+			}
+			delete[] arr;
+			arr = temp;
+			vector_size = new_size;
+		}
+		size_t size() const { return vector_size; }
+		void print_vector()
+		{
+			for (size_t i = 0; i < vector_size; i++)
+			{
+				std::cout << arr[i] << std::endl;
+			}
+		}
+
+		~vector() { delete[] arr; }
 	};
 }
-
