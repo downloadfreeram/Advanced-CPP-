@@ -99,7 +99,7 @@ namespace cpplab {
 		void resize(const int new_size)
 		{
 			if (new_size >= vector_size)
-				throw std::invalid_argument("ERROR: The number of the resize is larger than the vector length ");
+				throw std::invalid_argument("ERROR: The resize value is greater than the vector length ");
 			T* temp = new T[new_size];
 			for (size_t i = 0; i < new_size; i++)
 			{
@@ -116,14 +116,14 @@ namespace cpplab {
 			{
 				std::cout << arr[i] << std::endl;
 			}
+			std::cout << std::endl;
 		}
 
-		~vector() { delete[] arr; }
 		template <typename U>
 		T operator*(const U& other) const
 		{
 			if (this->vector_size != other.size())
-				throw std::invalid_argument("ERROR: Vectors length does not match");
+				throw std::invalid_argument("ERROR: Vectors must be of the same size to compute the dot product.");
 
 			T dotProduct = 0;
 			for (size_t i = 0; i < vector_size; ++i)
@@ -132,5 +132,7 @@ namespace cpplab {
 			}
 			return dotProduct;
 		}
+
+		~vector() { delete[] arr; }
 	};
 }
