@@ -1,7 +1,6 @@
 #include <iostream>
 #include "template_header.h"
 
-
 int main()
 {
     //zadanie 1
@@ -16,22 +15,23 @@ int main()
     insertion_sort(w2);
 
     //zadanie 3
-    cpplab::vector<double> w3;
-    cpplab::vector<double> w4;
-    std::vector<double> w5 = {1.5,2.5};
-    w3.push_back(1.5);
-    w3.push_back(2.5);
+    cpplab::vector<float> w3;
+    cpplab::vector<float> w4;
+    std::vector<float> w5 = {11.543,2.22};
+    w3.push_back(1.3);
+    w3.push_back(2.6);
 
-    w4.push_back(3.5);
-    w4.push_back(5.5);
+    w4.push_back(3.08);
+    w4.push_back(5.222);
 
     //dot product with different vectors
-    auto dot_res = w3 * w5;
+    auto dot_res = w4 * w5;
     std::cout << "Dot product: " << dot_res << std::endl;
 
     //dot product with same vectors
-    auto dot_res2 = w3 * w4;
+    auto dot_res2 = w4 * w3;
     std::cout << "Dot product: " << dot_res2 << std::endl;
+
 
     
     
