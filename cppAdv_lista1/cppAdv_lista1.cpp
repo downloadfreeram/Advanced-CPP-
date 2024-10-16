@@ -10,29 +10,23 @@ int main()
     my_max(a, b, ([](auto a, auto b) -> auto {return a < b ? b : a; }));
 
     //zad 2
-    std::vector<int> w{ 23, 1, 10, 5, 2 };
+    std::vector<int> w1{ 23, 1, 10, 5, 2 };
     std::vector<std::string> w2{ "b","c","a","f","z","h"};
-    insertion_sort(w);
+    insertion_sort(w1);
     insertion_sort(w2);
 
     //zad 3
-    cpplab::vector<int> w1;
-    w1.push_back(1);
-    w1.push_back(2);
-    w1.push_back(3);
-    w1.push_back(4);
-    w1.push_back(5);
-    w1.push_back(6);
-    w1.push_back(7);
-    w1.push(9, 2);
-    w1.print_vector();
+    cpplab::vector<double> w3;
+    cpplab::vector<double> w4;
+    std::vector<double> w5 = {1.5,2.5};
+    w3.push_back(1.5);
+    w3.push_back(2.5);
 
-    w1.pop_back();
-    w1.pop_back();
-    w1.print_vector();
+    w4.push_back(1.5);
+    w4.push_back(2.5);
 
-    w1.resize(2);
-    w1.print_vector();
+    auto res = w3 * w5;
+    std::cout << "Dot product: " << res << std::endl;
     
 
 }

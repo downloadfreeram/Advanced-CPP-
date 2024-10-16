@@ -99,7 +99,7 @@ namespace cpplab {
 		void resize(const int new_size)
 		{
 			if (new_size >= vector_size)
-				throw std::runtime_error("ERROR: The number of the resize is larger than the vector length ");
+				throw std::invalid_argument("ERROR: The number of the resize is larger than the vector length ");
 			T* temp = new T[new_size];
 			for (size_t i = 0; i < new_size; i++)
 			{
@@ -119,5 +119,18 @@ namespace cpplab {
 		}
 
 		~vector() { delete[] arr; }
+		template <typename U>
+		T operator*(const U& other) const
+		{
+			if (this->vector_size != other.size())
+				throw std::invalid_argument("ERROR: Vectors length does not match");
+
+			T dotProduct = 0;
+			for (size_t i = 0; i < vector_size; ++i)
+			{
+				dotProduct += this->arr[i] * other[i];
+			}
+			return dotProduct;
+		}
 	};
 }
