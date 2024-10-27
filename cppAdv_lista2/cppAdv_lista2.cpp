@@ -1,6 +1,7 @@
-﻿#include <iostream>
 #include <vector>
 #include <utility>
+#include <algorithm>
+#include "alphanum.h"
 
 //zadanie 1
 template <typename T>
@@ -34,8 +35,11 @@ auto insertion_sort(std::vector<T> w)
 template <>
 auto insertion_sort(std::vector<std::string> w)
 {
-	std::cout << "ema eniu" << std::endl;
+	// korzystam z gotowego algorytmu znajdującego się na stronie: https://web.archive.org/web/20210918044134/http://davekoelle.com/files/alphanum.hpp
+	std::sort(w.begin(), w.end(), doj::alphanum_less<std::string>());
+	std::copy(w.begin(), w.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
 }
+
 
 //zadanie 2
 template <int N>
@@ -57,7 +61,7 @@ void print_all(T param)
 	std::cout << param << std::endl;
 }
 template <typename T, typename...Ts>
-constexpr void print_all(T&& first, Ts&&... rest) 
+constexpr void print_all(T&& first, Ts&&... rest)
 {
 	if constexpr (sizeof...(Ts) == 0)
 	{
@@ -73,9 +77,9 @@ constexpr void print_all(T&& first, Ts&&... rest)
 int main()
 {
 	std::vector<int> w = { 2,5,1,11,3 };
-	std::vector<std::string> w2 = { "aa","ab","ac" };
+	std::vector<std::string> w2 = {"z7.doc","z1.doc","z543.doc","z9.doc","z65.doc","z2.doc","z144.doc","z45.doc","z76.doc"};
 	insertion_sort(w);
 	insertion_sort(w2);
 	std::cout << Factorial<5>::value << std::endl;
-	print_all("string", 1.002, 20.8, 'c', 4.04f);
+	print_all("test", 1.005, 4.8, 'h', 8.63f);
 };
