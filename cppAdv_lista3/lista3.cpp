@@ -11,13 +11,22 @@ template <typename T, typename U>
 concept isSame = std::same_as<T, U>;
 
 template <typename T, typename U>
+concept sameSize = requires(T w1, U w2) {
+    { w1.size() == w2.size() } -> std::convertible_to<bool>;
+};
+
+template <typename T, typename U>
 concept isArithmetic = std::is_arithmetic_v<typename T::value_type> &&
 std::is_arithmetic_v<typename U::value_type>;
 
 template <typename U, typename W>
-requires isSame<U, W>&& isArithmetic<U, W>
+requires isSame<U, W>&& isArithmetic<U, W> && sameSize<U, W>
 auto operator*(U& vec1, W& vec2)
 {
+    if(vec1.size() != vec2.size())
+    {
+        throw std::invalid_argument("Vectors must be the same size");
+    }
 	using ValueType = decltype(vec1[0] * vec2[0]);
 	ValueType dotProduct = 0;
 
@@ -100,6 +109,8 @@ int main() {
 	std::vector<std::string> w4 = { "siema","eniu","z afrika" };
 	std::vector<std::string> w5 = { "siema","eniu","z afrika" };
 
+    	std::vector<int> w6 = { 4,5,6,8,9 };
+
 	//dot product with same type
 	auto dot_res2 = w1 * w2;
 	std::cout << "Dot product: " << dot_res2 << std::endl;
@@ -110,7 +121,10 @@ int main() {
 	//throws an error, because these aren't the same type
 	//std::cout << w2*w3 << std::endl;
 
-	//zadanie 2
+    	//throws an error because, vector sizes doesn't match
+    	//std::cout << w2*w6 << std::endl;
+	
+    //zadanie 2
 	std::vector<std::string> v_test = { "zupa","kura","jajo","arbuz","babilon" };
 
 	auto v_output = as_sorted_view(v_test);
