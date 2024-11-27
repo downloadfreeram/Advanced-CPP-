@@ -30,7 +30,28 @@ namespace cpplab {
 				vector_size = other.size();
 				std::copy(other.arr, other.arr + other.size(), arr);
 			}
-			std::cout << "Used copy assignement" << std::endl;
+			std::cout << "Used copy assignement operator" << std::endl;
+			return *this;
+		}
+		//move constructor
+		vector(vector&& other) : arr(other.arr),vector_size(other.vector_size)
+		{
+			other.arr = nullptr;
+			other.vector_size = 0;
+			std::cout << "Moved!" << std::endl;
+		}
+		//move assignement operator
+		vector& operator=(vector&& other)
+		{
+			if (this != &other)
+			{
+				delete[] arr;
+				arr = other.arr;
+				vector_size = other.vector_size;
+				other.arr = nullptr;
+				other.vector_size = 0;
+			}
+			std::cout << "Used move assignement operator" << std::endl;
 			return *this;
 		}
 		T& operator[] (size_t index)
@@ -40,7 +61,6 @@ namespace cpplab {
 
 			return arr[index];
 		}
-
 		void push_back(const T& value)
 		{
 			T* temp = new T[vector_size + 1];
@@ -52,7 +72,6 @@ namespace cpplab {
 			temp[vector_size] = value;
 			arr = temp;
 			vector_size++;
-
 		}
 		void push(const T& value, size_t index)
 		{
@@ -91,6 +110,10 @@ namespace cpplab {
 			arr = temp;
 			vector_size = new_size;
 		}
+		void emplace_back(const T& value)
+		{
+			
+		}
 		size_t size() const { return vector_size; }
 		void print_vector()
 		{
@@ -100,8 +123,7 @@ namespace cpplab {
 			}
 			std::cout << std::endl;
 		}
-
-		// deconostructor
+		// deconstructor
 		~vector() { delete[] arr; std::cout << "Destroyed" << std::endl; }
 	};
 }
@@ -123,15 +145,15 @@ auto operator*(const U& vec1, const W& vec2)
 }
 
 int main() {
-
 	cpplab::vector<int> a;
 	cpplab::vector<int> b = a;
 	cpplab::vector<int> c;
 	c = a;
+	cpplab::vector<int> d = std::move(a);
+	cpplab::vector<int> e;
+	e = std::move(b);
 
 	a.push_back(3);
 
 	a.print_vector();
-	
-
 }
