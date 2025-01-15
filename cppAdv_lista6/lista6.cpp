@@ -142,6 +142,8 @@ int main()
             return 12.0;
             });
 
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
         std::cout << pool.average() << std::endl;
     }
     return 0;
