@@ -36,7 +36,16 @@ public:
         start(ThreadNum);
     }
     double average() {
+        std::unique_lock<std::mutex> lock{ resultMutex };
+        if (results.empty()) {
+            return 0.0;
+        }
 
+        double sum = 0.0;
+        for (const auto& result : results) {
+            sum += result;
+        }
+        return sum / results.size();
     }
     void add_task(Task task)
     {
@@ -58,6 +67,9 @@ private:
     bool mStopping = false;
     std::queue<Task> mTasks;
 
+    std::vector<double> results;
+    std::mutex resultMutex;
+
     void start(std::size_t ThreadNum) {
         for (size_t i = 0u; i < ThreadNum; i++)
         {
@@ -76,7 +88,11 @@ private:
                         task = std::move(mTasks.front());
                         mTasks.pop();
                     }
-                    task();
+                    double result = task();
+                    {
+                        std::unique_lock<std::mutex> lock{ resultMutex };
+                        results.push_back(result);
+                    }
                 }
                 });
         }
@@ -108,18 +124,25 @@ int main()
     std::thread t2(sort_rest, std::ref(v));
     t2.join();
     {
-        thread_pool pool{ 12 };
+        thread_pool pool{ 4 };
 
         pool.add_task([] {
             return 42.0;
             });
 
         pool.add_task([] {
+            return 56.0;
+            });
+
+        pool.add_task([] {
             return 36.0;
             });
+
+        pool.add_task([] {
+            return 12.0;
+            });
+
+        std::cout << pool.average() << std::endl;
     }
-
-
-
     return 0;
 }
