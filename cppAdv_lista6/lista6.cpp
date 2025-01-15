@@ -4,6 +4,9 @@
 #include <thread>
 #include <algorithm>
 #include <functional>
+#include <condition_variable>
+#include <queue>
+
 //zadanie 1
 void sort_half(std::vector<int> w)
 {
@@ -28,26 +31,75 @@ void sort_rest(std::vector<int> w)
 //zadanie 2
 class thread_pool {
 public:
-
-    void add_task(std::function<double()> task) {
-
+    using Task = std::function<double()>;
+    thread_pool(std::size_t ThreadNum) {
+        start(ThreadNum);
     }
     double average() {
 
     }
-    void stop() {
+    void add_task(Task task)
+    {
+        {
+            std::unique_lock<std::mutex> lock{ mEventMutex };
+            mTasks.emplace(std::move(task));
+        }
 
+        mEventVar.notify_one();
     }
 
-    ~thread_pool() = default;
+    ~thread_pool() {
+        stop();
+    };
 private:
-    std::function<double()> tasks;
+    std::vector<std::thread> threads;
+    std::condition_variable mEventVar;
+    std::mutex mEventMutex;
+    bool mStopping = false;
+    std::queue<Task> mTasks;
+
+    void start(std::size_t ThreadNum) {
+        for (size_t i = 0u; i < ThreadNum; i++)
+        {
+            threads.emplace_back([=] {
+                while (true)
+                {
+                    Task task;
+                    {
+                        std::unique_lock<std::mutex> lock{ mEventMutex };
+
+                        mEventVar.wait(lock, [=] { return mStopping || !mTasks.empty(); });
+
+                        if (mStopping && mTasks.empty())
+                            break;
+
+                        task = std::move(mTasks.front());
+                        mTasks.pop();
+                    }
+                    task();
+                }
+                });
+        }
+    };
+    void stop() {
+        {
+            std::unique_lock<std::mutex> lock(mEventMutex);
+            mStopping = true;
+        }
+
+        mEventVar.notify_all();
+
+        for (auto& thread : threads)
+        {
+            thread.join();
+        }
+    }
 };
 int main()
 {
     srand(time(NULL));
     std::vector<int> v;
-    for (int i = 0;i < 1000;i++)
+    for (int i = 0; i < 1000; i++)
     {
         v.push_back(rand() % 100 + 1);
     }
@@ -55,5 +107,19 @@ int main()
     t1.join();
     std::thread t2(sort_rest, std::ref(v));
     t2.join();
+    {
+        thread_pool pool{ 12 };
+
+        pool.add_task([] {
+            return 42.0;
+            });
+
+        pool.add_task([] {
+            return 36.0;
+            });
+    }
+
+
+
     return 0;
 }
