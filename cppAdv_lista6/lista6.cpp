@@ -6,27 +6,26 @@
 #include <functional>
 #include <condition_variable>
 #include <queue>
+#include <chrono>
 
 //zadanie 1
 void sort_half(std::vector<int> w)
 {
-    std::cout << "Thread 1 started" << std::endl;
     std::sort(w.begin(), w.begin() + w.size() / 2);
     for (auto i : w)
     {
-        std::cout << i << std::endl;
+        std::cout << i << " ";
     }
-    std::cout << "Thread 1 done" << std::endl;
+    std::cout << "\n";
 }
 void sort_rest(std::vector<int> w)
 {
-    std::cout << "Thread 2 started" << std::endl;
     std::sort(w.begin() + w.size() / 2, w.end());
     for (auto i : w)
     {
-        std::cout << i << std::endl;
+        std::cout << i << " ";
     }
-    std::cout << "Thread 2 done" << std::endl;
+    std::cout << "\n";
 }
 //zadanie 2
 class thread_pool {
@@ -113,16 +112,21 @@ private:
 };
 int main()
 {
+    std::cout << "Thread 1 started" << std::endl;
+    std::cout << "Thread 2 started" << std::endl;
     srand(time(NULL));
     std::vector<int> v;
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0;i < 1000;i++)
     {
         v.push_back(rand() % 100 + 1);
     }
     std::thread t1(sort_half, std::ref(v));
-    t1.join();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     std::thread t2(sort_rest, std::ref(v));
+    t1.join();
     t2.join();
+    std::cout << "Thread 1 done" << std::endl;
+    std::cout << "Thread 2 done" << std::endl;
     {
         thread_pool pool{ 4 };
 
